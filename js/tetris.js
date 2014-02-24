@@ -1,7 +1,16 @@
 //参考源代码写的俄罗斯方块js文件
 var tetris = {
 	//shape color
-	colors: ['#eaeaea', '#ff6600', '#eec900', '#0000ff', '#cc00ff', '#00ff00', '#66ccff', '#ff0000'],
+	colors: [
+		'#eaeaea',
+		'#ff6600',
+		'#eec900',
+		'#0000ff',
+		'#cc00ff',
+		'#00ff00',
+		'#66ccff',
+		'#ff0000'
+	],
 
 	//starting line for each shape
 	startAt: [0, -1, -1, -1, 0, -1, -1, 0],
@@ -13,31 +22,45 @@ var tetris = {
 		// none
 		[],
 		// I
-		[[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
-		 [[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]]],
+		[
+			[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
+			[[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]]
+		],
 		// T
-		[[[0,0,0,0],[1,1,1,0],[0,1,0,0],[0,0,0,0]],
-		 [[0,1,0,0],[1,1,0,0],[0,1,0,0],[0,0,0,0]],
-		 [[0,1,0,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]],
-		 [[0,1,0,0],[0,1,1,0],[0,1,0,0],[0,0,0,0]]],
+		[
+			[[0,0,0,0],[1,1,1,0],[0,1,0,0],[0,0,0,0]],
+			[[0,1,0,0],[1,1,0,0],[0,1,0,0],[0,0,0,0]],
+			[[0,1,0,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]],
+			[[0,1,0,0],[0,1,1,0],[0,1,0,0],[0,0,0,0]]
+		],
 		// L
-		[[[0,0,0,0],[1,1,1,0],[1,0,0,0],[0,0,0,0]],
-		 [[1,1,0,0],[0,1,0,0],[0,1,0,0],[0,0,0,0]],
-		 [[0,0,1,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]],
-		 [[0,1,0,0],[0,1,0,0],[0,1,1,0],[0,0,0,0]]],
+		[
+			[[0,0,0,0],[1,1,1,0],[1,0,0,0],[0,0,0,0]],
+			[[1,1,0,0],[0,1,0,0],[0,1,0,0],[0,0,0,0]],
+			[[0,0,1,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]],
+			[[0,1,0,0],[0,1,0,0],[0,1,1,0],[0,0,0,0]]
+		],
 		// J
-		[[[1,0,0,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]],
-		 [[0,1,1,0],[0,1,0,0],[0,1,0,0],[0,0,0,0]],
-		 [[0,0,0,0],[1,1,1,0],[0,0,1,0],[0,0,0,0]],
-		 [[0,1,0,0],[0,1,0,0],[1,1,0,0],[0,0,0,0]]],
+		[
+			[[1,0,0,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]],
+			[[0,1,1,0],[0,1,0,0],[0,1,0,0],[0,0,0,0]],
+			[[0,0,0,0],[1,1,1,0],[0,0,1,0],[0,0,0,0]],
+			[[0,1,0,0],[0,1,0,0],[1,1,0,0],[0,0,0,0]]
+		],
 		// Z
-		[[[0,0,0,0],[1,1,0,0],[0,1,1,0],[0,0,0,0]],
-		 [[0,0,1,0],[0,1,1,0],[0,1,0,0],[0,0,0,0]]],
+		[
+			[[0,0,0,0],[1,1,0,0],[0,1,1,0],[0,0,0,0]],
+			[[0,0,1,0],[0,1,1,0],[0,1,0,0],[0,0,0,0]]
+		],
 		// S
-		[[[0,0,0,0],[0,1,1,0],[1,1,0,0],[0,0,0,0]],
-		 [[0,1,0,0],[0,1,1,0],[0,0,1,0],[0,0,0,0]]],
+		[
+			[[0,0,0,0],[0,1,1,0],[1,1,0,0],[0,0,0,0]],
+			[[0,1,0,0],[0,1,1,0],[0,0,1,0],[0,0,0,0]]
+		],
 		// O
-		[[[0,1,1,0],[0,1,1,0],[0,0,0,0],[0,0,0,0]]]],
+		[
+			[[0,1,1,0],[0,1,1,0],[0,0,0,0],[0,0,0,0]]]
+		],
 
 	//per-load elements for the grid
 	init : function(){
@@ -63,16 +86,26 @@ var tetris = {
 
 		//Array which contains data of the grid
 		tetris.grid = [
-			[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,1,1,1,1,1,1,1,1,1,1,1]];
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,0,0,0,0,0,0,0,0,0,0,1],
+			[1,1,1,1,1,1,1,1,1,1,1,1]
+		];
 		$('#grid td').css('backgroundColor', tetris.colors[0]);
 		$('#start').unbind('click', tetris.start).val('pause').click(tetris.pause);
 		$('#stop').removeAttr('disabled');
@@ -85,11 +118,11 @@ var tetris = {
 	},
 	key: function(e){
 		switch(e.which){
-			case 74 : case 106 :tetris.moveLeft(); break; //J 
-			case 76 : case 108 :tetris.moveRight(); break; //L 
-			case 75 : case 107 :tetris.moveDown(); break; //K 
-			case 73 : case 105 :tetris.rotate(); break; //I 
-		}		
+			case 74 : case 106 :tetris.moveLeft(); break; //J
+			case 76 : case 108 :tetris.moveRight(); break; //L
+			case 75 : case 107 :tetris.moveDown(); break; //K
+			case 73 : case 105 :tetris.rotate(); break; //I
+		}
 	},
 	newShape: function(){
 		var r = 1 + Math.random() * 7;
@@ -122,20 +155,18 @@ var tetris = {
 		}
 		return false;
 	},
-
 	pause: function(){
 		$(tetris.bound).unbind('press', tetris.key);
 		window.clearInterval(tetris.timer);
 		tetris.timer = null;
 		$('#start').unbind('click0', tetris.pause).val('resume').click(tetris.resume);
 	},
-
 	resume: function(){
 		$(this.bound).keypress(this.key);
-		this.timer = window.setInterval(this.moveDown, this.duration);	
+		this.timer = window.setInterval(this.moveDown, this.duration);
 		$('#start').unclick(this.resume).val('pause').click(this.pause);
 	},
-//	stop the game
+	//	stop the game
 	gameOver: function(){
 		var i, j;
 		if(tetris.timer){
@@ -157,7 +188,6 @@ var tetris = {
 		}
 		tetris.draw(tetris.r0,tetris.x0,tetris.y0, '#ccc');
 	},
-	
 	//check overlays
 	canGo: function(r, x, y){
 		var i, j;
@@ -200,7 +230,6 @@ var tetris = {
 			tetris.touchDown();
 		}
 	},
-
 	//The current shape touches down
 	touchDown: function(){
 		var i, j, k, r, f;
@@ -217,14 +246,14 @@ var tetris = {
 			if(this.grid[i].join('').indexOf('0') == -1){
 				for(j = 1; j < 11; j++){
 					this.cells[k][j].css('backgroundColor', '#ccc');
-				}	
+				}
 				f++;
 				for(j = i; j > 0; j--){
 					this.grid[j] = this.grid[j - 1].concat();
 				}
 				i++;
 			}
-		}	
+		}
 		//animate
 		if(f){
 			window.clearInterval(this.timer);
@@ -236,9 +265,8 @@ var tetris = {
 		}else{
 			this.gameOver();
 		}
-		
-	},
 
+	},
 	//finish the touchdown process
 	after: function(f){
 		var i, j, l = (this.level < 20 ? this.level :20) * 25;
@@ -272,10 +300,10 @@ var tetris = {
 	refresh: function(){
 		this.draw(this.r0, this.x0, this.y0, this.colors[0]);
 		this.draw(this.r, this.x, this.y, this.colors[this.cur]);
-		
+
 		$('#level').html(this.level + 1);
 		$('#lines').html(this.line);
-		$('#score').html(this.score);	
+		$('#score').html(this.score);
 
 		this.x0 = this.x;
 		this.y0 = this.y;
@@ -288,4 +316,4 @@ $(function(){
 	$('#grid table, #next table').css('backgroundColor', tetris.colors[0]);
 	$('#start').click(tetris.start);
 	$('#stop').click(tetris.gameOver);
-})
+});
