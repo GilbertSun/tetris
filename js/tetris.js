@@ -159,12 +159,12 @@ var tetris = {
 		$(tetris.bound).unbind('press', tetris.key);
 		window.clearInterval(tetris.timer);
 		tetris.timer = null;
-		$('#start').unbind('click0', tetris.pause).val('resume').click(tetris.resume);
+		$('#start').unbind('click', tetris.pause).val('resume').click(tetris.resume);
 	},
 	resume: function(){
 		$(this.bound).keypress(this.key);
 		this.timer = window.setInterval(this.moveDown, this.duration);
-		$('#start').unclick(this.resume).val('pause').click(this.pause);
+		$('#start').unbind('click', this.resume).val('pause').click(this.pause);
 	},
 	//	stop the game
 	gameOver: function(){
@@ -310,10 +310,3 @@ var tetris = {
 		this.r0 = this.r;
 	}
 };
-
-$(function(){
-	tetris.init();
-	$('#grid table, #next table').css('backgroundColor', tetris.colors[0]);
-	$('#start').click(tetris.start);
-	$('#stop').click(tetris.gameOver);
-});
