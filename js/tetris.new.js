@@ -36,6 +36,7 @@
 	};
 	Tetris.prototype.start = function () {
 		this.duration = this.options.initSpeed;
+		this.fail = false;
 		this._resetOffset();
 		this._resetScreen();
 		window.clearInterval(this.timer);
@@ -81,10 +82,16 @@
 		}, duration);
 	};
 	Tetris.prototype._downTetromino = function () {
+		if (this.fail) return;
 		if (this._isTetrominoCollision(this.offsetY + 1)) {
 			$('td.droping', this.$element)
 				.removeClass('droping')
 				.addClass('fill');
+			if (this.offsetY < 0) {
+				this.fail = true;
+				this.failHandler && this.failHandler();
+				return;
+			}
 			this.dealWithElimate();
 			this.throwTetrmino();
 		} else {
