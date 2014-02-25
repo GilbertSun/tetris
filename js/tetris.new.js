@@ -46,6 +46,18 @@
 		window.clearInterval(this.timer);
 		this.throwTetrmino();
 	};
+	Tetris.prototype.moveDown = function () {
+
+	};
+	Tetris.prototype.moveLeft = function () {
+
+	};
+	Tetris.prototype.moveRight = function () {
+
+	};
+	Tetris.prototype.rotate = function () {
+
+	};
 	Tetris.prototype.throwTetrmino = function () {
 		var duration = this.duration,
 			_this = this;
