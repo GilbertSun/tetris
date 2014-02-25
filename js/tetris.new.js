@@ -119,7 +119,7 @@
 	};
 	Tetris.prototype._isTetrominoCollision = function (offsetY, offsetX, tetromino) {
 		var i, ilen, j, jlen,
-			nextcell;
+			$nextcell = $();
 
 		tetromino = tetromino || this.tetromino;
 		offsetY = offsetY || this.offsetY;
@@ -127,7 +127,9 @@
 
 		for (i = 0, ilen = tetromino.length; i < ilen; i++) {
 			for (j = 0, jlen = tetromino[i].length; j < jlen; j++) {
-				$nextcell = $('.r' + (offsetY + i) + 'c' + (offsetX + j), this.$ele);
+				if (offsetY + i >= 0 && offsetX + j >= 0) {
+					$nextcell = $('table tr', this.$ele).eq(offsetY + i).children().eq(offsetX + j);
+				}
 				if (tetromino[i][j] === 1 && ($nextcell.hasClass('fill') || offsetY + i + 1 > this.options.h)) {
 					return true;
 				}
@@ -158,9 +160,9 @@
 			rowi, coli, $ttr;
 
 		for (rowi = 0; rowi < options.h; rowi++) {
-			$tr = $('<tr class=row-"' + rowi + '"/>');
+			$tr = $('<tr />');
 			for (coli = 0; coli < options.w; coli++) {
-				$tr.append($('<td class="r' + rowi + 'c' + coli + '"/>'));
+				$tr.append($('<td />'));
 			}
 			$table.append($tr);
 		}
