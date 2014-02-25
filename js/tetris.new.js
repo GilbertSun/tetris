@@ -82,9 +82,10 @@
 	};
 	Tetris.prototype._downTetromino = function () {
 		if (this._isTetrominoCollision(this.offsetY + 1)) {
-			$('td.droping', this.$ele)
+			$('td.droping', this.$element)
 				.removeClass('droping')
 				.addClass('fill');
+			this.dealWithElimate();
 			this.throwTetrmino();
 		} else {
 			this.offsetY++;
@@ -95,7 +96,7 @@
 		var tetromino = this.tetromino,
 			offsetX = this.offsetX,
 			offsetY = this.offsetY,
-			$ele = this.$ele,
+			$ele = this.$element,
 			i, j, ilen, jlen,
 			cellx, celly;
 		$('td.droping', $ele)
@@ -108,7 +109,7 @@
 					cellx = offsetX + j;
 					celly = offsetY + i;
 					if (cellx >= 0 && celly >= 0) {
-						$('table tr:eq(' + celly + ') td:eq(' + cellx + ')', this.$ele)
+						$('table tr:eq(' + celly + ') td:eq(' + cellx + ')', $ele)
 							.css('background', 'red')
 							.addClass('droping');
 					}
@@ -128,7 +129,7 @@
 		for (i = 0, ilen = tetromino.length; i < ilen; i++) {
 			for (j = 0, jlen = tetromino[i].length; j < jlen; j++) {
 				if (offsetY + i >= 0 && offsetX + j >= 0) {
-					$nextcell = $('table tr', this.$ele).eq(offsetY + i).children().eq(offsetX + j);
+					$nextcell = $('table tr', this.$element).eq(offsetY + i).children().eq(offsetX + j);
 				}
 				if (tetromino[i][j] === 1 && ($nextcell.hasClass('fill') || offsetY + i + 1 > this.options.h)) {
 					return true;
@@ -136,7 +137,16 @@
 			}
 		}
 		return false;
+	};
+	Tetris.prototype.dealWithElimate = function () {
+		var $ele = this.$element,
+			$completeRow = $('tr', $ele)
+				.filter(function () {
+					return $(this).children(':not(.fill)').length === 0;
+				});
 
+		$ele.find('table').prepend($completeRow.children('td').css('background', '').removeClass('fill').end());
+		return $completeRow.length;
 	};
 	Tetris.prototype._randTetromino = function () {
 		var tetrominos = this.options.tetrominos;
@@ -148,7 +158,7 @@
 		this.offsetX = this.options.w / 2 -2;
 	};
 	Tetris.prototype._resetScreen = function() {
-		$('td', this.$ele)
+		$('td', this.$element)
 			.removeClass('fill droping')
 			.css('background', '');
 	};
