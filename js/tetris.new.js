@@ -108,9 +108,11 @@
 				if (tetromino[i][j] === 1) {
 					cellx = offsetX + j;
 					celly = offsetY + i;
-					$('.r' + celly + 'c' + cellx, this.$ele)
-						.css('background', 'red')
-						.addClass('droping');
+					if (cellx >= 0 && celly >= 0) {
+						$('table tr:eq(' + celly + ') td:eq(' + cellx + ')', this.$ele)
+							.css('background', 'red')
+							.addClass('droping');
+					}
 				}
 			}
 		}
