@@ -9,8 +9,11 @@
 			text-align: center;
 		}
 		.content {
-			width: 400px;
-			margin: 0 auto;
+			background-color: #FFF;
+			width: 500px;
+			margin: 10px auto 0px auto;
+			-webkit-box-shadow: 0px 1px 3px #000;
+			-moz-box-shadow: 0px 1px 3px #000;
 		}
 		.content .title {
 			border-bottom: solid #999 1px;
@@ -23,17 +26,22 @@
 			font-size: 10px;
 			font-weight: bold;
 		}
-		.content .game {
+		.content .screen {
 			padding: 20px;
 			background-color: #FFF;
 			-webkit-box-shadow: 0px 1px 3px #000;
 			-moz-box-shadow: 0px 1px 3px #000;
-			-o-box-shadow: 0px 1px 3px #000;
-			box-shadow: 0px 1px 3px #000;
+		}
+		.content .game{
 			float: left;
 		}
-		.content .game-info {
+		.content .game-info{
+			width: 165px;
 			float: right;
+			margin-top: 3px;
+		}
+		.clear {
+			clear: both;
 		}
 	</style>
 </head>
@@ -41,16 +49,19 @@
 	<h1>俄罗斯方块</h1>
 	<div class="content">
 		<div class='title'>俄罗斯方块</div>
-		<div class="game">
+		<div class="screen">
+			<div class="game">
 
-		</div>
-		<div class="game-info">
-			<div class="controller">
-				<button class="start">控制</button>
-				<button class="left">左</button>
-				<button class="right">右</button>
-				<button class="rotate">右</button>
 			</div>
+			<div class="game-info">
+				<div class="controller">
+					<button class="start">开始</button>
+					<button class="left">左</button>
+					<button class="right">右</button>
+					<button class="rotate">转</button>
+				</div>
+			</div>
+			<div class="clear"></div>
 		</div>
 	</div>
 	<script src="../lib/jquery-1.8.1.js"></script>
