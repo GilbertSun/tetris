@@ -47,7 +47,7 @@
 	};
 	Tetris.prototype.moveLeft = function () {
 		var offsetX = this.offsetX;
-		if (offsetX > 0) {
+		if (offsetX > 0 && !this._isTetrominoCollision(this.offsetY, this.offsetX - 1)) {
 			this.offsetX--;
 			this._displayTetromino();
 		}
@@ -55,7 +55,7 @@
 	Tetris.prototype.moveRight = function () {
 		var offsetX = this.offsetX,
 			tetrominoWidth = this.tetromino[0].length;
-		if (offsetX <  this.options.w - tetrominoWidth) {
+		if (offsetX <  this.options.w - tetrominoWidth && !this._isTetrominoCollision(this.offsetY, this.offsetX + 1)) {
 			this.offsetX++;
 			this._displayTetromino();
 		}
@@ -63,7 +63,6 @@
 	Tetris.prototype.rotate = function () {
 		var tetromino = this.tetromino,
 			rotateTetromino = Tetris.rotateRight90deg(tetromino);
-
 		if (!this._isTetrominoCollision(this.offsetY, this.offsetX, rotateTetromino)) {
 			this.tetromino = rotateTetromino;
 			this._displayTetromino();
@@ -125,6 +124,7 @@
 		offsetY = offsetY || this.offsetY;
 		offsetX = offsetX || this.offsetX;
 
+		if (offsetX + tetromino[0].length > this.options.w) return true;
 		for (i = 0, ilen = tetromino.length; i < ilen; i++) {
 			for (j = 0, jlen = tetromino[i].length; j < jlen; j++) {
 				if (offsetY + i >= 0 && offsetX + j >= 0) {
