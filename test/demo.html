@@ -47,6 +47,9 @@
 		<div class="game-info">
 			<div class="controller">
 				<button class="start">控制</button>
+				<button class="left">左</button>
+				<button class="right">右</button>
+				<button class="rotate">右</button>
 			</div>
 		</div>
 	</div>
@@ -56,6 +59,31 @@
 		$('.game').tetris();
 		$('.start').click(function () {
 			$('.game').data('tetris').start();
+		});
+		$('.left').click(function () {
+			$('.game').data('tetris').moveLeft();
+		});
+		$('.right').click(function () {
+			$('.game').data('tetris').moveRight();
+		});
+		$('.rotate').click(function () {
+			$('.game').data('tetris').rotate();
+		})
+		$(window).keydown(function (e) {
+			switch (e.keyCode) {
+				case 37 :
+					$('.game').data('tetris').moveLeft();
+					break;
+				case 39 :
+					$('.game').data('tetris').moveRight();
+					break;
+				case 38 :
+					$('.game').data('tetris').rotate();
+					break;
+				case 40 :
+					$('.game').data('tetris').moveDown();
+					break;
+			}
 		});
 	</script>
 </body>
