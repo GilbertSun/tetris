@@ -1,312 +1,200 @@
-//参考源代码写的俄罗斯方块js文件
-var tetris = {
-	//shape color
-	colors: [
-		'#eaeaea',
-		'#ff6600',
-		'#eec900',
-		'#0000ff',
-		'#cc00ff',
-		'#00ff00',
-		'#66ccff',
-		'#ff0000'
-	],
+(function ($) {
+	function Tetris (element, options) {
+		this.$element = $(element);
+		this.options = $.extend({}, Tetris.DEFAULT, options);
+		this.init();
+	}
+	Tetris.DEFAULT = {
+		w: 12,
+		h: 21,
+		initSpeed: 300,
+		tetrominos: [
+			[[1, 1, 1, 1]], // I
+			[[1, 0, 0], [1, 1, 1]], // J
+			[[0, 0, 1], [1, 1, 1]], // L
+			[[1, 1], [1, 1]], // O
+			[[0, 1, 1], [1, 1, 0]], // S
+			[[0, 1, 0], [1, 1, 1]], // T
+			[[1, 1, 0], [0, 1, 1]] // Z
+		]
+	};
+	// 将数值向右旋转90度
+	Tetris.rotateRight90deg = function (originArr) {
+		var rotateArr = [],
+			i, ilen, j, jlen;
 
-	//starting line for each shape
-	startAt: [0, -1, -1, -1, 0, -1, -1, 0],
-
-	//points per line for each shape
-	Points: [0, 40, 100, 300, 1200],
-
-	shapes: [
-		// none
-		[],
-		// I
-		[
-			[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
-			[[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0]]
-		],
-		// T
-		[
-			[[0,0,0,0],[1,1,1,0],[0,1,0,0],[0,0,0,0]],
-			[[0,1,0,0],[1,1,0,0],[0,1,0,0],[0,0,0,0]],
-			[[0,1,0,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]],
-			[[0,1,0,0],[0,1,1,0],[0,1,0,0],[0,0,0,0]]
-		],
-		// L
-		[
-			[[0,0,0,0],[1,1,1,0],[1,0,0,0],[0,0,0,0]],
-			[[1,1,0,0],[0,1,0,0],[0,1,0,0],[0,0,0,0]],
-			[[0,0,1,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]],
-			[[0,1,0,0],[0,1,0,0],[0,1,1,0],[0,0,0,0]]
-		],
-		// J
-		[
-			[[1,0,0,0],[1,1,1,0],[0,0,0,0],[0,0,0,0]],
-			[[0,1,1,0],[0,1,0,0],[0,1,0,0],[0,0,0,0]],
-			[[0,0,0,0],[1,1,1,0],[0,0,1,0],[0,0,0,0]],
-			[[0,1,0,0],[0,1,0,0],[1,1,0,0],[0,0,0,0]]
-		],
-		// Z
-		[
-			[[0,0,0,0],[1,1,0,0],[0,1,1,0],[0,0,0,0]],
-			[[0,0,1,0],[0,1,1,0],[0,1,0,0],[0,0,0,0]]
-		],
-		// S
-		[
-			[[0,0,0,0],[0,1,1,0],[1,1,0,0],[0,0,0,0]],
-			[[0,1,0,0],[0,1,1,0],[0,0,1,0],[0,0,0,0]]
-		],
-		// O
-		[
-			[[0,1,1,0],[0,1,1,0],[0,0,0,0],[0,0,0,0]]]
-		],
-
-	//per-load elements for the grid
-	init : function(){
-		var i, j, k;
-		this.cells = [];
-		for(i = -3; i < 18; i++){
-			this.cells[i] = [];
-			for(j = 1; j < 11; j++){
-				k = String.fromCharCode(i + 97);
-				if(i < 0)
-					k = 'z';
-				this.cells[i][j] = $(['#', k, j].join(''));
+		for (i = 0, ilen = originArr.length; i < ilen; i++) {
+			for (j = 0, jlen = originArr[i].length; j < jlen; j++) {
+				if (typeof rotateArr[j] === 'undefined') rotateArr[j] = [];
+				rotateArr[j][i] = originArr[ilen - i - 1][j];
 			}
 		}
-		this.bound = $.browser == 'msie' ? '#tetris' : window;
-	},
+		return rotateArr;
+	};
+	Tetris.prototype.init = function() {
+		this._drawScreen();
+	};
+	Tetris.prototype.start = function () {
+		this.duration = this.options.initSpeed;
+		this.fail = false;
+		this._resetOffset();
+		this._resetScreen();
+		window.clearInterval(this.timer);
+		this.throwTetrmino();
+	};
 
-	//Initialize to start the game
-	start: function(){
-		tetris.level = 0;
-		tetris.lines = 0;
-		tetris.score = 0;
-
-		//Array which contains data of the grid
-		tetris.grid = [
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,0,0,0,0,0,0,0,0,0,0,1],
-			[1,1,1,1,1,1,1,1,1,1,1,1]
-		];
-		$('#grid td').css('backgroundColor', tetris.colors[0]);
-		$('#start').unbind('click', tetris.start).val('pause').click(tetris.pause);
-		$('#stop').removeAttr('disabled');
-		$(tetris.bound).keypress(tetris.key);
-		tetris.next =tetris.newShape();
-		tetris.shift();
-		tetris.duration = 600;
-		tetris.refresh();
-		tetris.timer = window.setInterval(tetris.moveDown, tetris.duration);
-	},
-	key: function(e){
-		switch(e.which){
-			case 74 : case 106 :tetris.moveLeft(); break; //J
-			case 76 : case 108 :tetris.moveRight(); break; //L
-			case 75 : case 107 :tetris.moveDown(); break; //K
-			case 73 : case 105 :tetris.rotate(); break; //I
+	Tetris.prototype.moveDown = function () {
+		this._downTetromino();
+	};
+	Tetris.prototype.moveLeft = function () {
+		var offsetX = this.offsetX;
+		if (offsetX > 0 && !this._isTetrominoCollision(this.offsetY, this.offsetX - 1)) {
+			this.offsetX--;
+			this._displayTetromino();
 		}
-	},
-	newShape: function(){
-		var r = 1 + Math.random() * 7;
-		return parseInt(r >7 ? 7 : r, 10);
-	},
-	setNext: function(){
-		var i, j, s, c, d, n = this.colors[0];
-		this.next = this.newShape();
-		s = this.shapes[this.next][0];
-		c = this.colors[this.next];
-		for(i = 0; i < 4; i++){
-			for(j = 0; j < 4; j++){
-				d = s[i][j] ? c : n;
-				$(['#x', j, i].join('')).css('backgroundColor', d);
+	};
+	Tetris.prototype.moveRight = function () {
+		var offsetX = this.offsetX,
+			tetrominoWidth = this.tetromino[0].length;
+		if (offsetX <  this.options.w - tetrominoWidth && !this._isTetrominoCollision(this.offsetY, this.offsetX + 1)) {
+			this.offsetX++;
+			this._displayTetromino();
+		}
+	};
+	Tetris.prototype.rotate = function () {
+		var tetromino = this.tetromino,
+			rotateTetromino = Tetris.rotateRight90deg(tetromino);
+		if (!this._isTetrominoCollision(this.offsetY, this.offsetX, rotateTetromino)) {
+			this.tetromino = rotateTetromino;
+			this._displayTetromino();
+		}
+	};
+	Tetris.prototype.throwTetrmino = function () {
+		var duration = this.duration,
+			_this = this;
+		window.clearInterval(this.timer);
+		this._resetOffset();
+		this.tetromino = this._randTetromino();
+
+		_this._downTetromino();
+		this.timer = window.setInterval(function () {
+			_this._downTetromino();
+		}, duration);
+	};
+	Tetris.prototype._downTetromino = function () {
+		if (this.fail) return;
+		if (this._isTetrominoCollision(this.offsetY + 1)) {
+			$('td.droping', this.$element)
+				.removeClass('droping')
+				.addClass('fill');
+			if (this.offsetY < 0) {
+				this.fail = true;
+				this.failHandler && this.failHandler();
+				return;
+			}
+			this.dealWithElimate();
+			this.throwTetrmino();
+		} else {
+			this.offsetY++;
+			this._displayTetromino();
+		}
+	};
+	Tetris.prototype._displayTetromino = function () {
+		var tetromino = this.tetromino,
+			offsetX = this.offsetX,
+			offsetY = this.offsetY,
+			$ele = this.$element,
+			i, j, ilen, jlen,
+			cellx, celly;
+		$('td.droping', $ele)
+			.css('background', '')
+			.removeClass('droping');
+
+		for (i = 0, ilen = tetromino.length; i < ilen; i++) {
+			for (j = 0, jlen = tetromino[i].length; j < jlen; j++) {
+				if (tetromino[i][j] === 1) {
+					cellx = offsetX + j;
+					celly = offsetY + i;
+					if (cellx >= 0 && celly >= 0) {
+						$('table tr:eq(' + celly + ') td:eq(' + cellx + ')', $ele)
+							.css('background', 'red')
+							.addClass('droping');
+					}
+				}
 			}
 		}
-	},
+	};
+	Tetris.prototype._isTetrominoCollision = function (offsetY, offsetX, tetromino) {
+		var i, ilen, j, jlen,
+			$nextcell = $();
 
-	//the next shape becomes the current one; reset coordinates
-	shift: function(){
-		this.cur = this.next;
-		this.x = this.x0 = 4;
-		this.y = this.startAt[this.cur];
-		this.y0 = this.y -2;
-		this.r = this.r0 = 0;
-		this.curShape = this.shapes[this.cur];
-		if(this.canGo(0, this.x, this.y)){
-			this.setNext();
-			return true;
+		tetromino = tetromino || this.tetromino;
+		offsetY = offsetY || this.offsetY;
+		offsetX = offsetX || this.offsetX;
+
+		if (offsetX + tetromino[0].length > this.options.w) return true;
+		for (i = 0, ilen = tetromino.length; i < ilen; i++) {
+			for (j = 0, jlen = tetromino[i].length; j < jlen; j++) {
+				if (offsetY + i >= 0 && offsetX + j >= 0) {
+					$nextcell = $('table tr', this.$element).eq(offsetY + i).children().eq(offsetX + j);
+				}
+				if (tetromino[i][j] === 1 && ($nextcell.hasClass('fill') || offsetY + i + 1 > this.options.h)) {
+					return true;
+				}
+			}
 		}
 		return false;
-	},
-	pause: function(){
-		$(tetris.bound).unbind('press', tetris.key);
-		window.clearInterval(tetris.timer);
-		tetris.timer = null;
-		$('#start').unbind('click', tetris.pause).val('resume').click(tetris.resume);
-	},
-	resume: function(){
-		$(this.bound).keypress(this.key);
-		this.timer = window.setInterval(this.moveDown, this.duration);
-		$('#start').unbind('click', this.resume).val('pause').click(this.pause);
-	},
-	//	stop the game
-	gameOver: function(){
-		var i, j;
-		if(tetris.timer){
-			$(tetris.bound).unbind('keypress', tetris.key);
-			window.clearInterval(tetris.timer);
-			tetris.timer = null;
-			$('#start').unbind('click', tetris.pause).val('start').click(tetris.start);
-		}else{
-			$('#start').unbind('click', tetris.resume).val('start').click(tetris.start);
-		}
-		$('#stop').attr('disabled', true);
+	};
+	Tetris.prototype.dealWithElimate = function () {
+		var $ele = this.$element,
+			$completeRow = $('tr', $ele)
+				.filter(function () {
+					return $(this).children(':not(.fill)').length === 0;
+				});
 
-		for(i < 0; i < 18; i++){
-			for(j = 1; j < 11; j++){
-				if(tetris.grid[i][j]){
-					tetris.cells[i][j].css('backgroundColor', '#ccc');
-				}
-			}
-		}
-		tetris.draw(tetris.r0,tetris.x0,tetris.y0, '#ccc');
-	},
-	//check overlays
-	canGo: function(r, x, y){
-		var i, j;
-		for(i = 0; i < 4; i++){
-			for(j = 0; j < 4; j++){
-				if(this.curShape[r][j][i] && this.grid[y + j] && this.grid[y + j][x + i])
-					return false;
-			}
-		}
-		return true;
-	},
-	//Move the current shape to the left
-	moveLeft: function(){
-		if(tetris.canGo(tetris.r, tetris.x - 1, tetris.y)){
-			tetris.x--;
-			tetris.refresh();
-		}
-	},
-	//Move the current shape to right
-	moveRight: function(){
-		if(tetris.canGo(tetris.r, tetris.x + 1, tetris.y)){
-			tetris.x++;
-			tetris.refresh();
-		}
-	},
-	//Rotate the current shape
-	rotate: function(){
-		var r = tetris.r == tetris.curShape.length -1 ? 0 : tetris.r + 1;
-		if(tetris.canGo(r, tetris.x, tetris.y)){
-			tetris.r0 = tetris.r;
-			tetris.r = r;
-			tetris.refresh();
-		}
-	},
-	moveDown: function(){
-		if(tetris.canGo(tetris.r, tetris.x, tetris.y + 1)){
-			tetris.y++;
-			tetris.refresh();
-		}else{
-			tetris.touchDown();
-		}
-	},
-	//The current shape touches down
-	touchDown: function(){
-		var i, j, k, r, f;
-		//mark the grid
-		for(i = 0; i < 4; i++){
-			for(j = 0; j < 4; j++){
-				if(this.curShape[this.r][j][i] && this.grid[this.y + j])
-					this.grid[this.y + j][this.x + i] = this.cur;
-			}
-		}
+		$ele.find('table').prepend($completeRow.children('td').css('background', '').removeClass('fill').end());
+		return $completeRow.length;
+	};
+	Tetris.prototype._randTetromino = function () {
+		var tetrominos = this.options.tetrominos;
 
-		f = 0;
-		for(i = 17, k = 17; i > -1 && f < 4; i--, k--){
-			if(this.grid[i].join('').indexOf('0') == -1){
-				for(j = 1; j < 11; j++){
-					this.cells[k][j].css('backgroundColor', '#ccc');
-				}
-				f++;
-				for(j = i; j > 0; j--){
-					this.grid[j] = this.grid[j - 1].concat();
-				}
-				i++;
+		return tetrominos[random(0, tetrominos.length - 1)].slice();
+	};
+	Tetris.prototype._resetOffset = function () {
+		this.offsetY = -2;
+		this.offsetX = this.options.w / 2 -2;
+	};
+	Tetris.prototype._resetScreen = function() {
+		$('td', this.$element)
+			.removeClass('fill droping')
+			.css('background', '');
+	};
+	Tetris.prototype._drawScreen = function() {
+		var $ele = this.$element,
+			options = this.options,
+			$table = $('<table/>'),
+			$tr, $td,
+			rowi, coli, $ttr;
+
+		for (rowi = 0; rowi < options.h; rowi++) {
+			$tr = $('<tr />');
+			for (coli = 0; coli < options.w; coli++) {
+				$tr.append($('<td />'));
 			}
+			$table.append($tr);
 		}
-		//animate
-		if(f){
-			window.clearInterval(this.timer);
-			this.timer = window.setTimeout(function(){tetris.after(f);}, 100);
-		}
-		//try to continue
-		if(this.shift()){
-			this.refresh();
-		}else{
-			this.gameOver();
-		}
+		$ele.append($table);
+	};
 
-	},
-	//finish the touchdown process
-	after: function(f){
-		var i, j, l = (this.level < 20 ? this.level :20) * 25;
-		//status
-		this.lines += f;
+	$.fn.tetris = function (option) {
+		return this.each(function () {
+			var $this = $(this);
+			$this.data('tetris', (new Tetris(this, option)));
+		});
+	};
+	$.fn.tetris.Constructor = Tetris;
 
-		if(this.lines % 10 === 10){
-			this.level = this.lines / 10;
-		}
-		window.clearTimeout(this.timer);
-		this.timer = window.setInterval(this.moveDown, this.duration - l);
-		this.score += (this.level + 1) * this.Points[f];
-		//redraw the grid
-		for(i = 0; i < 18; i++){
-			for(j = 1; j < 11; j++){
-				this.cells[i][j].css('backgroundColor', this.colors[this.grid[i][j]]);
-			}
-		}
-		this.refresh();
-	},
-	draw: function(r, x, y, c){
-		var i, j;
-		for(i = 0; i < 4; i++){
-			for(j = 0; j < 4; j++){
-				if(this.curShape[r][j][i]){
-					this.cells[y + j][x + i].css('backgroundColor', c);
-				}
-			}
-		}
-	},
-	refresh: function(){
-		this.draw(this.r0, this.x0, this.y0, this.colors[0]);
-		this.draw(this.r, this.x, this.y, this.colors[this.cur]);
-
-		$('#level').html(this.level + 1);
-		$('#lines').html(this.line);
-		$('#score').html(this.score);
-
-		this.x0 = this.x;
-		this.y0 = this.y;
-		this.r0 = this.r;
+	function random(start, end) {
+		return Math.floor(Math.random()*(end - start + 1) + start);
 	}
-};
+}(window.jQuery));

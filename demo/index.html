@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>俄罗斯方块</title>
+	<link rel="stylesheet" href="../css/tetris.css">
+	<link rel="stylesheet" href="./demo.css">
+</head>
+<body>
+	<div class="scene">
+		<h1>GilbertSun's Tetris@v0.1</h1>
+		<div class="tetris">
+			<div class="tetris-screen tetris-component">
+
+			</div>
+			<div class="tetris-status">
+				<div class="score tetris-status-panel">
+					<h1>得分</h1>
+					<div class="content">
+						<ul>
+							<li>得分:</li>
+							<li>总分:</li>
+						</ul>
+					</div>
+				</div>
+				<div class="tips tetris-status-panel">
+					<h1>提示</h1>
+					<div class="content">
+						<ul>
+							<li>&uarr;: 旋转</li>
+							<li>&darr;: 向下</li>
+							<li>&larr;: 向左</li>
+							<li>&rarr;: 向右</li>
+							<li>空格: 开始/暂停</li>
+							<li>F5: 重新开始</li>
+						</ul>
+					</div>
+				</div>
+				<div class="control tetris-status-panel">
+					<h1>控制</h1>
+					<div class="content">
+						<p><button class="restart button button90">开始新游戏</button></p>
+						<p>
+							<button class="speed-increase button button20">+</button>
+							<button class="speed button">speed: 1</button>
+							<button class="speed-decrease button button20">-</button>
+						</p>
+						<p><button class="turn button button20">旋转</button></p>
+						<p>
+							<button class="turn button button20">向左</button>
+							<button class="turn button button20">开始</button>
+							<button class="turn button button20">向右</button>
+						</p>
+						<p>
+							<button class="turn button button20">向下</button>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<script src="../lib/jquery-1.8.1.js"></script>
+	<script src="../js/tetris.js"></script>
+	<script>
+		$('.tetris-screen').tetris();
+	</script>
+</body>
+</html>
