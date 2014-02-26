@@ -7,7 +7,7 @@
 	Tetris.DEFAULT = {
 		w: 12,
 		h: 21,
-		initSpeed: 1000,
+		initSpeed: 300,
 		tetrominos: [
 			[[1, 1, 1, 1]], // I
 			[[1, 0, 0], [1, 1, 1]], // J
