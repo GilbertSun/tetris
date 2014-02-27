@@ -125,7 +125,7 @@
 				.addClass('fill');
 			if (this.offsetY < 0) {
 				this.fail = true;
-				this.failHandler && this.failHandler();
+				typeof this.options.failHandler === 'function' && this.options.failHandler();
 				return;
 			}
 			this._dealWithElimate();
