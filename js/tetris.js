@@ -10,7 +10,13 @@
 		initSpeed: 400,
 		speedRate: function (score, oldRate) {},
 		tetrominos: [
-			[[1, 1, 1, 1]]
+			[[1, 1, 1, 1]], // I
+			[[1, 0, 0], [1, 1, 1]], // J
+			[[0, 0, 1], [1, 1, 1]], // L
+			[[1, 1], [1, 1]], // O
+			[[0, 1, 1], [1, 1, 0]], // S
+			[[0, 1, 0], [1, 1, 1]], // T
+			[[1, 1, 0], [0, 1, 1]] // Z
 		],
 		hotKey: {
 			rotate: 38,
@@ -51,7 +57,14 @@
 		window.clearInterval(this.timer);
 		this.throwTetrmino();
 	};
-
+	Tetris.prototype.pause = function () {
+		this.paused = true;
+		window.clearTimeout(this.timer);
+	};
+	Tetris.prototype.resume = function () {
+		this.paused = false;
+		this._downTetromino();
+	};
 	Tetris.prototype.moveDown = function () {
 		this._downTetromino();
 	};
@@ -79,18 +92,16 @@
 		}
 	};
 	Tetris.prototype.throwTetrmino = function () {
-		var speed = this.speed,
-			_this = this;
 		window.clearInterval(this.timer);
 		this._resetOffset();
 		this.tetromino = this._randTetromino();
 
-		_this._downTetromino();
-		this.timer = window.setInterval(function () {
-			_this._downTetromino();
-		}, speed);
+		this._downTetromino();
 	};
 	Tetris.prototype._downTetromino = function () {
+		var speed = this.speed,
+			_this = this;
+
 		if (this.fail) return;
 		if (this._isTetrominoCollision(this.offsetY + 1)) {
 			$('td.droping', this.$element)
@@ -106,6 +117,10 @@
 		} else {
 			this.offsetY++;
 			this._displayTetromino();
+			window.clearTimeout(this.timer);
+			this.timer = window.setTimeout(function () {
+				_this._downTetromino();
+			}, speed);
 		}
 	};
 	Tetris.prototype._displayTetromino = function () {
@@ -201,6 +216,7 @@
 		this.speed = this.options.initSpeed;
 		this.score = 0;
 		this.fail = false;
+		this.paused = false;
 	};
 	Tetris.prototype._drawScreen = function() {
 		var $ele = this.$element,
@@ -237,6 +253,9 @@
 				return false;
 				case hotKey.restart:
 					_this.start();
+				return false;
+				case hotKey.pause:
+					_this.paused ? _this.resume() : _this.pause();
 				return false;
 			}
 		});
