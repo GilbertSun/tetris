@@ -7,16 +7,22 @@
 	Tetris.DEFAULT = {
 		w: 12,
 		h: 21,
-		initSpeed: 300,
+		initSpeed: 400,
+		speedRate: function (score, oldRate) {},
 		tetrominos: [
-			[[1, 1, 1, 1]], // I
-			[[1, 0, 0], [1, 1, 1]], // J
-			[[0, 0, 1], [1, 1, 1]], // L
-			[[1, 1], [1, 1]], // O
-			[[0, 1, 1], [1, 1, 0]], // S
-			[[0, 1, 0], [1, 1, 1]], // T
-			[[1, 1, 0], [0, 1, 1]] // Z
-		]
+			[[1, 1, 1, 1]]
+		],
+		hotKey: {
+			rotate: 38,
+			left: 37,
+			right: 39,
+			down: 40,
+			pause: 32,
+			restart: 116
+		},
+		scoreRate: function (elimate, oldscore) {},
+		statusHandler: function (score, speed) {},
+		autoStart: false
 	};
 	// 将数值向右旋转90度
 	Tetris.rotateRight90deg = function (originArr) {
@@ -33,10 +39,13 @@
 	};
 	Tetris.prototype.init = function() {
 		this._drawScreen();
+		this._bindController();
+		if (this.options.autoStart) {
+			this.start();
+		}
 	};
 	Tetris.prototype.start = function () {
-		this.duration = this.options.initSpeed;
-		this.fail = false;
+		this._resetStatus();
 		this._resetOffset();
 		this._resetScreen();
 		window.clearInterval(this.timer);
@@ -70,7 +79,7 @@
 		}
 	};
 	Tetris.prototype.throwTetrmino = function () {
-		var duration = this.duration,
+		var speed = this.speed,
 			_this = this;
 		window.clearInterval(this.timer);
 		this._resetOffset();
@@ -79,7 +88,7 @@
 		_this._downTetromino();
 		this.timer = window.setInterval(function () {
 			_this._downTetromino();
-		}, duration);
+		}, speed);
 	};
 	Tetris.prototype._downTetromino = function () {
 		if (this.fail) return;
@@ -92,7 +101,7 @@
 				this.failHandler && this.failHandler();
 				return;
 			}
-			this.dealWithElimate();
+			this._dealWithElimate();
 			this.throwTetrmino();
 		} else {
 			this.offsetY++;
@@ -145,15 +154,34 @@
 		}
 		return false;
 	};
-	Tetris.prototype.dealWithElimate = function () {
+	Tetris.prototype._dealWithElimate = function () {
 		var $ele = this.$element,
+			scoreRate = this.options.scoreRate,
+			speedRate = this.options.speedRate,
+			statusHandler = this.options.statusHandler,
 			$completeRow = $('tr', $ele)
 				.filter(function () {
 					return $(this).children(':not(.fill)').length === 0;
-				});
+				}),
+			elimate = $completeRow.length;
 
 		$ele.find('table').prepend($completeRow.children('td').css('background', '').removeClass('fill').end());
-		return $completeRow.length;
+
+		if (elimate > 0) {
+			if (typeof scoreRate === 'function') {
+				this.score = scoreRate(elimate, this.score) || this.score;
+			} else if (typeof scoreRate === 'number') {
+				this.score += elimate * scoreRate;
+			}
+
+			if (typeof speedRate === 'function') {
+				this.speed = speedRate(this.score, this.speed) || this.speed;
+			}
+
+			if (typeof statusHandler === 'function') {
+				statusHandler(this.score, this.speed);
+			}
+		}
 	};
 	Tetris.prototype._randTetromino = function () {
 		var tetrominos = this.options.tetrominos;
@@ -168,6 +196,11 @@
 		$('td', this.$element)
 			.removeClass('fill droping')
 			.css('background', '');
+	};
+	Tetris.prototype._resetStatus = function () {
+		this.speed = this.options.initSpeed;
+		this.score = 0;
+		this.fail = false;
 	};
 	Tetris.prototype._drawScreen = function() {
 		var $ele = this.$element,
@@ -184,6 +217,29 @@
 			$table.append($tr);
 		}
 		$ele.append($table);
+	};
+	Tetris.prototype._bindController = function () {
+		var hotKey = this.options.hotKey,
+			_this = this;
+		$(window).bind('keydown.tetris', function (e) {
+			switch (e.which) {
+				case hotKey.rotate:
+					_this.rotate();
+				return false;
+				case hotKey.left:
+					_this.moveLeft();
+				return false;
+				case hotKey.right:
+					_this.moveRight();
+				return false;
+				case hotKey.down:
+					_this.moveDown();
+				return false;
+				case hotKey.restart:
+					_this.start();
+				return false;
+			}
+		});
 	};
 
 	$.fn.tetris = function (option) {
