@@ -8,6 +8,7 @@
 		w: 12,
 		h: 21,
 		initSpeed: 400,
+		control: 'keyboard',
 		speedRate: function (score, oldRate) {},
 		tetrominos: [
 			[[1, 1, 1, 1]], // I
@@ -45,10 +46,20 @@
 	};
 	Tetris.prototype.init = function() {
 		this._drawScreen();
-		this._bindController();
+
+		if (this.options.control === 'keyboard') {
+			this.bindControl();
+		}
 		if (this.options.autoStart) {
 			this.start();
 		}
+	};
+	Tetris.prototype.unbindControl = function () {
+		$(window).unbind('.tetris');
+	};
+	Tetris.prototype.bindControl = function () {
+		this.unbindControl();
+		this._bindController();
 	};
 	Tetris.prototype.start = function () {
 		this._resetStatus();
@@ -263,8 +274,14 @@
 
 	$.fn.tetris = function (option) {
 		return this.each(function () {
-			var $this = $(this);
-			$this.data('tetris', (new Tetris(this, option)));
+			var $this = $(this),
+				data = $this.data('tetris'),
+				options = typeof option === 'object' && option;
+			if (!data) $this.data('tetris', (data = new Tetris(this, options)));
+
+			if (typeof option === 'string' && typeof data[option] === 'function') {
+				data[option]();
+			}
 		});
 	};
 	$.fn.tetris.Constructor = Tetris;
