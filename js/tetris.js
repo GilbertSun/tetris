@@ -19,6 +19,7 @@
 			[[0, 1, 0], [1, 1, 1]], // T
 			[[1, 1, 0], [0, 1, 1]] // Z
 		],
+		tetrominosColor: ['#f00', '#f90', '#ff0', '#9f0', '#0f0', '#0f9', '#0ff', '#09f', '#00f', '#90f', '#f0f', '#f09'],
 		hotKey: {
 			rotate: 38,
 			left: 37,
@@ -53,6 +54,9 @@
 		if (this.options.autoStart) {
 			this.start();
 		}
+	};
+	Tetris.prototype.destroy = function () {
+		this.unbindControl();
 	};
 	Tetris.prototype.unbindControl = function () {
 		$(window).unbind('.tetris');
@@ -106,6 +110,7 @@
 		window.clearInterval(this.timer);
 		this._resetOffset();
 		this.tetromino = this._randTetromino();
+		this.tetrominoColor = this._randColor();
 
 		this._downTetromino();
 	};
@@ -136,6 +141,7 @@
 	};
 	Tetris.prototype._displayTetromino = function () {
 		var tetromino = this.tetromino,
+			color = this.tetrominoColor,
 			offsetX = this.offsetX,
 			offsetY = this.offsetY,
 			$ele = this.$element,
@@ -152,7 +158,7 @@
 					celly = offsetY + i;
 					if (cellx >= 0 && celly >= 0) {
 						$('table tr:eq(' + celly + ') td:eq(' + cellx + ')', $ele)
-							.css('background', 'red')
+							.css('background', color)
 							.addClass('droping');
 					}
 				}
@@ -213,6 +219,11 @@
 		var tetrominos = this.options.tetrominos;
 
 		return tetrominos[random(0, tetrominos.length - 1)].slice();
+	};
+	Tetris.prototype._randColor = function () {
+		var tetrominosColor = this.options.tetrominosColor;
+
+		return tetrominosColor[random(0, tetrominosColor.length - 1)];
 	};
 	Tetris.prototype._resetOffset = function () {
 		this.offsetY = -2;
@@ -281,6 +292,10 @@
 
 			if (typeof option === 'string' && typeof data[option] === 'function') {
 				data[option]();
+			}
+
+			if (option === 'destroy') {
+				$this.removeData('tetris');
 			}
 		});
 	};
