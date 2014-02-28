@@ -18,7 +18,7 @@
     function Tetris (element, options) {
         this.$element = $(element);
         this.options = $.extend({}, Tetris.DEFAULT, options);
-        this.init();
+        this._init();
     }
 
     // default option for Tetris
@@ -60,7 +60,11 @@
         statusHandler: function (score, speed) {},
         autoStart: false
     };
-    // 将数值向右旋转90度
+    /**
+     * rotate the tetromino to right 90de
+     * @param  {Array} originArr tetromino shape array
+     * @return {Array}           the rotated tetromino array
+     */
     Tetris.rotateRight90deg = function (originArr) {
         var rotateArr = [],
             i, ilen, j, jlen;
@@ -73,25 +77,21 @@
         }
         return rotateArr;
     };
-    Tetris.prototype.init = function() {
+    /**
+     * call when init the game
+     */
+    Tetris.prototype._init = function() {
         this._drawScreen();
 
         if (this.options.control === 'keyboard') {
-            this.bindControl();
+            this._bindControl();
         }
         if (this.options.autoStart) {
             this.start();
         }
     };
     Tetris.prototype.destroy = function () {
-        this.unbindControl();
-    };
-    Tetris.prototype.unbindControl = function () {
-        $(window).unbind('.tetris');
-    };
-    Tetris.prototype.bindControl = function () {
-        this.unbindControl();
-        this._bindController();
+        this._unbindControl();
     };
     Tetris.prototype.start = function () {
         this._resetStatus();
@@ -287,9 +287,10 @@
         }
         $ele.append($table);
     };
-    Tetris.prototype._bindController = function () {
+    Tetris.prototype._bindControl = function () {
         var hotKey = this.options.hotKey,
             _this = this;
+        this._unbindControl();
         $(window).bind('keydown.tetris', function (e) {
             switch (e.which) {
                 case hotKey.rotate:
@@ -312,6 +313,9 @@
                 return false;
             }
         });
+    };
+    Tetris.prototype._unbindControl = function () {
+        $(window).unbind('.tetris');
     };
 
     $.fn.tetris = function (option) {
