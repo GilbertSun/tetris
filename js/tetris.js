@@ -95,6 +95,7 @@
      * $().tetris('destroy')
      */
     Tetris.prototype.destroy = function () {
+        window.clearTimeout(this.timer);
         this._unbindControl();
     };
     Tetris.prototype.start = function () {
