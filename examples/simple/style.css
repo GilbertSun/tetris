@@ -86,3 +86,15 @@ ul {
 	margin: 10px;
 	text-align: center;
 }
+.tetris-component table {
+	border-spacing: 3px;
+}
+.tetris-component td {
+	background-color: #FFF;
+	height: 18px;
+	width: 18px;
+	font-size: 0px;
+	line-height: 0px;
+	-webkit-box-shadow: 0px 1px 3px #000;
+	-moz-box-shadow: 0px 1px 3px #000;
+}
