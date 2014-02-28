@@ -287,8 +287,7 @@
         var $ele = this.$element,
             options = this.options,
             $table = $('<table/>'),
-            $tr, $td,
-            rowi, coli, $ttr;
+            $tr, rowi, coli;
 
         for (rowi = 0; rowi < options.h; rowi++) {
             $tr = $('<tr />');
