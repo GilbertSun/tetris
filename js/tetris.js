@@ -90,6 +90,10 @@
             this.start();
         }
     };
+    /**
+     * call when want to destroy the game
+     * $().tetris('destroy')
+     */
     Tetris.prototype.destroy = function () {
         this._unbindControl();
     };
@@ -98,7 +102,7 @@
         this._resetOffset();
         this._resetScreen();
         window.clearInterval(this.timer);
-        this.throwTetrmino();
+        this._throwTetromino();
     };
     Tetris.prototype.pause = function () {
         this.paused = true;
@@ -134,7 +138,8 @@
             this._displayTetromino();
         }
     };
-    Tetris.prototype.throwTetrmino = function () {
+    // throw a new tetromino
+    Tetris.prototype._throwTetromino = function () {
         window.clearInterval(this.timer);
         this._resetOffset();
         this.tetromino = this._randTetromino();
@@ -157,7 +162,7 @@
                 return;
             }
             this._dealWithElimate();
-            this.throwTetrmino();
+            this._throwTetromino();
         } else {
             this.offsetY++;
             this._displayTetromino();
@@ -193,6 +198,13 @@
             }
         }
     };
+    /**
+     * check for collision for tetromino on a specific offset
+     * @param  {Number}  offsetY
+     * @param  {Number}  offsetX
+     * @param  {Array}  tetromino
+     * @return {Boolean}
+     */
     Tetris.prototype._isTetrominoCollision = function (offsetY, offsetX, tetromino) {
         var i, ilen, j, jlen,
             $nextcell = $();
