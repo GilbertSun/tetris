@@ -25,6 +25,15 @@
     Tetris.DEFAULT = {
         w: 12, // the horizontal cell width of the game
         h: 21, // the vertical cell width of the game
+        control: 'keyboard',
+        hotKey: {
+            rotate: 38,
+            left: 37,
+            right: 39,
+            down: 40,
+            pause: 32,
+            restart: 116
+        },
         /**
          * the initial speed of game 1=>400ms move down the tetrominos per initSpeed
          * @type {Number}
@@ -34,8 +43,7 @@
          *  4=>100ms
          */
         initSpeed: 1,
-        control: 'keyboard',
-        speed: function (score, oldRate) {},
+        // tetrominos maybe shown
         tetrominos: [
             [[1, 1, 1, 1]], // I
             [[1, 0, 0], [1, 1, 1]], // J
@@ -45,16 +53,10 @@
             [[0, 1, 0], [1, 1, 1]], // T
             [[1, 1, 0], [0, 1, 1]] // Z
         ],
+        // tetromino's maybe color
         tetrominosColor: ['#f00', '#f90', '#ff0', '#9f0', '#0f0', '#0f9', '#0ff', '#09f', '#00f', '#90f', '#f0f', '#f09'],
-        hotKey: {
-            rotate: 38,
-            left: 37,
-            right: 39,
-            down: 40,
-            pause: 32,
-            restart: 116
-        },
-        scoreRate: function (elimate, oldscore) {},
+        speed: function (score, oldRate) {},
+        score: function (elimate, oldscore) {},
         statusHandler: function (score, speed) {},
         autoStart: false
     };
@@ -214,7 +216,7 @@
     };
     Tetris.prototype._dealWithElimate = function () {
         var $ele = this.$element,
-            scoreRate = this.options.scoreRate,
+            score = this.options.score,
             speed = this.options.speed,
             statusHandler = this.options.statusHandler,
             $completeRow = $('tr', $ele)
@@ -226,10 +228,10 @@
         $ele.find('table').prepend($completeRow.children('td').css('background', '').removeClass('fill').end());
 
         if (elimate > 0) {
-            if (typeof scoreRate === 'function') {
-                this.score = scoreRate(elimate, this.score);
-            } else if (typeof scoreRate === 'number') {
-                this.score += elimate * scoreRate;
+            if (typeof score === 'function') {
+                this.score = score(elimate, this.score);
+            } else if (typeof score === 'number') {
+                this.score += elimate * score;
             }
 
             if (typeof speed === 'function') {

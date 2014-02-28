@@ -18,9 +18,8 @@
 					<h1>状态</h1>
 					<div class="content">
 						<ul>
-							<li>得分: <span class="score-value">0</span></li>
 							<li>总分: <span class="score-total-value">0</span></li>
-							<li>速度: <span class="current-speed">400</span></li>
+							<li>速度: <span class="current-speed">1</span></li>
 						</ul>
 					</div>
 				</div>
@@ -64,13 +63,17 @@
 		$('.tetris-screen').tetris({
 			'autoStart': false,
 			'control': 'keyboard',
-			'scoreRate': function (elimate, oldScore) {
+			'score': function (elimate, oldScore) {
 				var score = elimate * 20,
 					totalScore = oldScore + score;
 				return totalScore;
 			},
 			'speed': function (score, oldSpeed) {
 				return Math.ceil(score/20);
+			},
+			statusHandler: function (score, speed) {
+				$('.score-total-value').text(score);
+				$('.current-speed').text(5 - speed/100);
 			}
 		});
 	</script>
