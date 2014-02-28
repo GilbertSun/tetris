@@ -35,7 +35,7 @@
          */
         initSpeed: 1,
         control: 'keyboard',
-        speedRate: function (score, oldRate) {},
+        speed: function (score, oldRate) {},
         tetrominos: [
             [[1, 1, 1, 1]], // I
             [[1, 0, 0], [1, 1, 1]], // J
@@ -215,7 +215,7 @@
     Tetris.prototype._dealWithElimate = function () {
         var $ele = this.$element,
             scoreRate = this.options.scoreRate,
-            speedRate = this.options.speedRate,
+            speed = this.options.speed,
             statusHandler = this.options.statusHandler,
             $completeRow = $('tr', $ele)
                 .filter(function () {
@@ -232,8 +232,8 @@
                 this.score += elimate * scoreRate;
             }
 
-            if (typeof speedRate === 'function') {
-                this.speed = this._convertRealSpeed(speedRate(this.score, this.speed));
+            if (typeof speed === 'function') {
+                this.speed = this._convertRealSpeed(speed(this.score, this.speed));
             }
 
             if (typeof statusHandler === 'function') {
