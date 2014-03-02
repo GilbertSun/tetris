@@ -1,0 +1,26 @@
+{
+  "name": "tetris",
+  "version": "0.0.1",
+  "description": "a tetris wirited by jQuery",
+  "keywords": [
+    "jQuery",
+    "JavaScript",
+    "Tetris",
+    "game"
+  ],
+  "homepage": "https://github.com/GilbertSun/tetris",
+  "bugs": "https://github.com/GilbertSun/tetris/issues",
+  "license": "MIT",
+  "author": "GilbertSun <szb4321@gmail.com> (http://www.gcore.net.cn)",
+  "directories": {
+    "lib": "./src",
+    "example": "./example"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:GilbertSun/tetris.git"
+  },
+  "scripts": {
+    "test": "grunt test"
+  }
+}
