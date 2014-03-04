@@ -114,7 +114,9 @@
         this._downTetromino();
     };
     Tetris.prototype.moveDown = function () {
-        this._downTetromino();
+        if (!this.paused) {
+            this._downTetromino();
+        }
     };
     Tetris.prototype.moveLeft = function () {
         var offsetX = this.offsetX;
