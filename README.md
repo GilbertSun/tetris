@@ -1,4 +1,4 @@
-Tetris 一个简单的俄罗斯方块游戏
+Tetris 一个简单的俄罗斯方块游戏 [![Build Status](https://travis-ci.org/GilbertSun/tetris.png?branch=master)](https://travis-ci.org/GilbertSun/tetris)
 ==============================
 
 ## 介绍
