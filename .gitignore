@@ -1,7 +1,10 @@
+# files
+
 *.swp
 *.sublime-project
 *.sublime-workspace
 
+# directory
 node_modules
 .DS_STORE
 dest

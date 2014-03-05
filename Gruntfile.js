@@ -12,13 +12,17 @@ module.exports = function(grunt) {
                     'dest/tetris.min.js': ['src/tetris.js']
                 }
             }
+        },
+        jshint: {
+            options: {
+                jshintrc: true
+            },
+            all: ['src/**/*.js']
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
-    grunt.registerTask('default', 'Log some stuff', function() {
-        grunt.log.write('logging some stuff...').ok();
-    });
     grunt.registerTask('build', ['uglify']);
 };
