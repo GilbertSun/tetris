@@ -1,5 +1,6 @@
 {
     "jquery": true,
+    "node": true,
     "bitwise": false,
     "browser": true,
     "devel":true,
